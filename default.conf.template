@@ -1,0 +1,26 @@
+server {
+    listen 80;
+    server_name _;
+
+    # Root and /wa both redirect to WhatsApp.
+    # This lets your QR code point to either https://wa.yourdomain.com
+    # or https://wa.yourdomain.com/wa and both will work.
+    location = / {
+        return 301 https://wa.me/${WHATSAPP_NUMBER}?text=${WHATSAPP_MESSAGE};
+    }
+
+    location = /wa {
+        return 301 https://wa.me/${WHATSAPP_NUMBER}?text=${WHATSAPP_MESSAGE};
+    }
+
+    # Simple health check endpoint so Coolify/you can verify the container is alive
+    location = /health {
+        add_header Content-Type text/plain;
+        return 200 'ok';
+    }
+
+    # Anything else 404s cleanly
+    location / {
+        return 404;
+    }
+}
